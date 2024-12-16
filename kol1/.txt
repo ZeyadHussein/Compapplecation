@@ -1,0 +1,235 @@
+// Create a database
+app.get("/createdb", (req, res) => {
+    let sql = "CREATE DATABASE IF NOT EXISTS nodemysql";
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating database:", err);
+            res.status(500).send("Error creating database");
+            return;
+        }
+        res.send("Database created");
+    });
+});
+
+
+// Create customer table
+app.get('/createcustomer', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS customer (
+        cus_id INT AUTO_INCREMENT,
+        name VARCHAR(255),
+        phone VARCHAR(20),
+        email VARCHAR(255),
+        PRIMARY KEY (cus_id)
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating customer table:", err);
+            res.status(500).send("Error creating customer table");
+            return;
+        }
+        res.send("Customer table created");
+    });
+});
+
+
+// Create tables table
+app.get('/createtables', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS tables (
+        table_id INT AUTO_INCREMENT,
+        table_no VARCHAR(20),
+        seating_cap VARCHAR(255),
+        PRIMARY KEY (table_id)
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating tables table:", err);
+            res.status(500).send("Error creating tables table");
+            return;
+        }
+        res.send("Tables table created");
+    });
+});
+
+// Create orders table
+app.get('/createorder', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS orders (
+        order_id INT AUTO_INCREMENT,
+        cus_id INT,
+        order_date DATE,
+        total_amount DECIMAL(10,2),
+        payment_status VARCHAR(255),
+        PRIMARY KEY (order_id),
+        FOREIGN KEY (cus_id) REFERENCES customer(cus_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating orders table:", err);
+            res.status(500).send("Error creating orders table");
+            return;
+        }
+        res.send("Orders table created");
+    });
+});
+
+// Create menuitem table
+app.get('/createmenuitem', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS menuitem (
+        menuitem_id INT AUTO_INCREMENT,
+        item_name VARCHAR(255),
+        item_description VARCHAR(255),
+        item_price DECIMAL(10,2),
+        PRIMARY KEY (menuitem_id)
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating menuitem table:", err);
+            res.status(500).send("Error creating menuitem table");
+            return;
+        }
+        res.send("Menu items table created");
+    });
+});
+
+// Create orderitem table
+app.get('/createorderitem', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS orderitem (
+        orderitem_id INT AUTO_INCREMENT,
+        order_id INT,
+        menuitem_id INT,
+        quantity INT,
+        PRIMARY KEY (orderitem_id),
+        FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+        FOREIGN KEY (menuitem_id) REFERENCES menuitem(menuitem_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating orderitem table:", err);
+            res.status(500).send("Error creating orderitem table");
+            return;
+        }
+        res.send("Order Item table created");
+    });
+});
+
+// Create payment table
+app.get('/createpayment', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS payment (
+        pay_id INT AUTO_INCREMENT,
+        order_id INT,
+        pay_type VARCHAR(255),
+        pay_date DATE,
+        pay_amount DECIMAL(10,2),
+        PRIMARY KEY (pay_id),
+        FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating payment table:", err);
+            res.status(500).send("Error creating payment table");
+            return;
+        }
+        res.send("Payment table created");
+    });
+});
+
+// Create reservation table
+app.get('/createreservation', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS reservation (
+        res_id INT AUTO_INCREMENT,
+        cus_id INT,
+        table_id INT,
+        reservation_date DATE,
+        reservation_time TIME,
+        guest_no INT,
+        PRIMARY KEY (res_id),
+        FOREIGN KEY (cus_id) REFERENCES customer(cus_id) ON DELETE CASCADE,
+        FOREIGN KEY (table_id) REFERENCES tables(table_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    `;
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating reservation table:", err);
+            res.status(500).send("Error creating reservation table");
+            return;
+        }
+        res.send("Reservation table created");
+    });
+});
+
+
+// Route to create the reservation table (GET route)
+app.get('/createreservation', (req, res) => {
+    let sql = `
+    CREATE TABLE IF NOT EXISTS reservation (
+        res_id INT AUTO_INCREMENT,
+        cus_id INT,
+        table_id INT,
+        reservation_date DATE,
+        reservation_time TIME,
+        guest_no INT,
+        PRIMARY KEY (res_id),
+        FOREIGN KEY (cus_id) REFERENCES customer(cus_id) ON DELETE CASCADE,
+        FOREIGN KEY (table_id) REFERENCES tables(table_id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+    `;
+    
+    pool.query(sql, (err) => {
+        if (err) {
+            console.error("Error creating reservation table:", err);
+            res.status(500).send("Error creating reservation table");
+            return;
+        }
+        res.send("Reservation table created successfully");
+    });
+});
+
+
+app.get('/addorder', (req, res) => {
+    let order = {
+        cus_id: 1, // Example customer ID (ensure this exists in the customer table)
+        order_date: new Date(), // Current date
+        total_amount: 100.00, // Sample total amount
+        payment_status: 'Paid' // Sample payment status
+    }; // Sample data
+
+    let sql = 'INSERT INTO orders SET ?';
+    pool.query(sql, order, (err, result) => {
+        if (err) {
+            console.error("Error adding order:", err);
+            return res.status(500).send("Error adding order");
+        }
+        res.send(`Order added with ID: ${result.insertId}`);
+    });
+});
+
+
+// Route to add a menu item (GET route)
+app.get('/addmenuitem', (req, res) => {
+    let menuitem = {
+        item_name: 'Pizza', // Sample item name
+        item_description: 'Delicious cheese pizza', // Sample item description
+        item_price: 12.99 // Sample item price
+    };
+
+    let sql = 'INSERT INTO menuitem SET ?';
+    pool.query(sql, menuitem, (err, result) => {
+        if (err) {
+            console.error("Error adding menu item:", err);
+            return res.status(500).send("Error adding menu item");
+        }
+        res.send(`Menu item added with ID: ${result.insertId}`);
+    });
+});
