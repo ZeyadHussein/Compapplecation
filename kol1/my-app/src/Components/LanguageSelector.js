@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import { useLanguage } from "../contexts/LanguageContext"; // Use language context
 
 const LanguageSelector = () => {
-  const [language, setLanguage] = useState("en");
+  const { language, changeLanguage } = useLanguage(); // Get language state and change function
 
   const handleChange = (e) => {
-    setLanguage(e.target.value);
+    changeLanguage(e.target.value);
     console.log("Selected language:", e.target.value);
   };
 
