@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+
+// Import route files
 const customerRoute = require('./Routes/customerRoute');
 const tableRoute = require('./Routes/tableRoute');
 const orderRoute = require('./Routes/orderRoute');
@@ -8,19 +10,25 @@ const orderitemRoute = require('./Routes/orderitemsRoute');
 const paymentRoute = require('./Routes/paymentRoute');
 const reservationRoute = require('./Routes/reservationRoute');
 
-app.use(express.json()); // Middleware to parse JSON body
+// Middleware to parse incoming JSON bodies
+app.use(express.json());
 
-app.use('/api', customerRoute);
-app.use('/api', tableRoute);
-app.use('/api', orderRoute);
-app.use('/api', menuitemRoute);
-app.use('/api', orderitemRoute);
-app.use('/api', paymentRoute);
-app.use('/api', reservationRoute);
+// Define routes with specific path names
+app.use('/api/customers', customerRoute);
+app.use('/api/tables', tableRoute);
+app.use('/api/orders', orderRoute);
+app.use('/api/menuitems', menuitemRoute);
+app.use('/api/orderitems', orderitemRoute);
+app.use('/api/payments', paymentRoute);
+app.use('/api/reservations', reservationRoute);
 
+// Catch-all for undefined routes (404)
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });

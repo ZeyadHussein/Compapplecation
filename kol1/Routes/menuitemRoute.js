@@ -3,29 +3,28 @@ const router = express.Router();
 const pool = require('../db/db');
 
 
-// Route to add a menu item (POST route)
 router.post('/addmenuitem', (req, res) => {
     const { item_name, item_description, item_price } = req.body;
 
-    if (!item_name || !item_description || !item_price) {
-        return res.status(400).json({ message: 'Please provide all fields: item_name, item_description, item_price' });
+    if (!item_name || !item_description || typeof item_price !== 'number') {
+        return res.status(400).json({
+            message: 'Invalid input. Please provide item_name, item_description, and item_price.'
+        });
     }
 
-    let menuitem = {
-        item_name,
-        item_description,
-        item_price
-    };
+    const menuitem = { item_name, item_description, item_price };
+    const sql = 'INSERT INTO menuitem SET ?';
 
-    let sql = 'INSERT INTO menuitem SET ?';
     pool.query(sql, menuitem, (err, result) => {
         if (err) {
             console.error("Error adding menu item:", err);
-            return res.status(500).send("Error adding menu item");
+            return res.status(500).json({ message: 'Error adding menu item' });
         }
-        res.status(201).send(`Menu item added with ID: ${result.insertId}`);
+
+        res.status(201).json({ message: 'Menu item added successfully', menuItemId: result.insertId });
     });
 });
+
 
 
 // Route to get all menu items

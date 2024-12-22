@@ -84,7 +84,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
           {paymentMethod === "creditCard" && (
             <>
               <div className="form-group">
-                <label htmlFor="cardNumber">Card Number</label>
+                <label htmlFor="cardNumber">Card Number </label>
                 <input
                   type="text"
                   id="cardNumber"
@@ -94,7 +94,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="expiryDate">Expiry Date</label>
+                <label htmlFor="expiryDate">Expiry Date  </label>
                 <input
                   type="text"
                   id="expiryDate"
@@ -104,7 +104,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="cvv">CVV</label>
+                <label htmlFor="cvv">CVV  </label>
                 <input
                   type="password"
                   id="cvv"

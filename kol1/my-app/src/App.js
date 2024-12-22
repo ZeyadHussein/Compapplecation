@@ -8,6 +8,9 @@ import SignUp from "./Components/SignUp";
 import Menu from "./Components/Menu";
 import Footer from "./Components/Footer";
 import Cart from "./Components/Cart";
+import Reservation from "./Components/Reservation"; // Import your Reservation component
+import Table from "./Components/Table";  // Import Table.js
+import CrudPage from "./Components/CrudPage"; // Import the new CrudPage component
 import "./App.css";
 
 function App() {
@@ -33,6 +36,9 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/menu" element={<Menu onAddToCart={addToCart} />} />
             <Route path="/cart" element={<Cart cart={cart} onRemoveFromCart={removeFromCart} />} />
+            <Route path="/reservation" element={<Reservation />} /> {/* New Reservation route */}
+            <Route path="/table" element={<Table />} />  {/* New Table route */}
+            <Route path="/crud" element={<CrudPage />} />  {/* New CRUD operations route */}
           </Routes>
           <Footer />
         </div>
@@ -40,6 +46,4 @@ function App() {
     </LanguageProvider>
   );
 }
-
 export default App;
-
