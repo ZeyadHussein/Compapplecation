@@ -5,28 +5,25 @@ const pool = require('../db/db');
 
 // Route to add an order item (POST route)
 router.post('/addorderitem', (req, res) => {
+    console.log("Request body:", req.body); // Log the incoming request body
     const { order_id, menuitem_id, quantity } = req.body;
-
+  
     if (!order_id || !menuitem_id || !quantity) {
-        return res.status(400).json({ message: 'Please provide all fields: order_id, menuitem_id, quantity' });
+      console.error("Missing fields in request body");
+      return res.status(400).json({ message: 'Please provide all fields: order_id, menuitem_id, quantity' });
     }
-
-    let orderItem = {
-        order_id,
-        menuitem_id,
-        quantity
-    };
-
+  
+    let orderItem = { order_id, menuitem_id, quantity };
     let sql = 'INSERT INTO orderitem SET ?';
     pool.query(sql, orderItem, (err, result) => {
-        if (err) {
-            console.error("Error adding order item:", err);
-            return res.status(500).send("Error adding order item");
-        }
-        res.status(201).send(`Order item added with ID: ${result.insertId}`);
+      if (err) {
+        console.error("Error adding order item:", err);
+        return res.status(500).send("Error adding order item");
+      }
+      res.status(201).send(`Order item added with ID: ${result.insertId}`);
     });
-});
-
+  });
+  
 // Route to get all order items
 router.get('/orderitems', (req, res) => {
     console.log('Request received for all order items');

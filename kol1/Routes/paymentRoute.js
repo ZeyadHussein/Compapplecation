@@ -5,20 +5,26 @@ const pool = require('../db/db');
 // POST route to add payment information
 router.post('/adpayment', (req, res) => {
     console.log("Post Request Received");
+    console.log("Request Body:", req.body); // Log the request body
+
+    // Validate the request body
+    const { order_id, pay_type, pay_date, pay_amount } = req.body;
+    if (!order_id || !pay_type || !pay_date || !pay_amount) {
+        return res.status(400).json({
+            "Status": "Error",
+            "Message": "Missing required fields"
+        });
+    }
 
     // Query to insert payment details into the payment table
     const query = `
         INSERT INTO payment (order_id, pay_type, pay_date, pay_amount)
         VALUES (?, ?, ?, ?)
     `;
+    console.log("Query:", query); // Log the query
 
     // Execute the query with the data from the request body
-    pool.query(query, [
-        req.body.order_id,
-        req.body.pay_type,
-        req.body.pay_date,
-        req.body.pay_amount
-    ], (err, result) => {
+    pool.query(query, [order_id, pay_type, pay_date, pay_amount], (err, result) => {
         if (err) {
             console.error('Error while inserting record:', err);
             return res.status(500).json({ "Status": "Error", "Message": "Failed to add record" });
@@ -32,6 +38,7 @@ router.post('/adpayment', (req, res) => {
         });
     });
 });
+
 
 
 // Route to get all payments

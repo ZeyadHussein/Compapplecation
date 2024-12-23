@@ -17,7 +17,7 @@ router.post('/addcustomer', (req, res) => {
             console.error("Error inserting customer:", err);
             return res.status(500).json({ message: 'Error inserting customer', error: err.message });
         }
-        res.status(201).json({ message: `Customer ${name} added successfully with ID: ${result.insertId}` });
+        res.status(200).json({ message: `Customer ${name} added successfully with ID: ${result.insertId}` });
     });
 });
 
@@ -51,16 +51,16 @@ router.put('/update-customer', (req, res) => {
     pool.query(query, [name, phone, email, cus_id], (err, result) => {
         if (err) {
             console.error("Error updating customer:", err);
-            res.status(500).send("Error updating customer");
+            res.status(500).json({message:"Error updating customer"});
             return;
         }
         
         if (result.affectedRows === 0) {
-            res.status(404).send("Customer not found");
+            res.status(404).json({message:"Customer not found"});
             return;
         }
 
-        res.send("Customer updated successfully");
+        res.json({message:"Customer updated successfully"});
     });
 });
 
@@ -107,34 +107,29 @@ router.get('/searchcustomer', (req, res) => {
     });
 });
 // Route for customer login
-router.post('/login', (req, res) => {
-    // Destructure email and phone from request body
+router.post('/login', (req, res) => { 
     const { email, phone } = req.body;
-    
-    // Ensure both email and phone are provided
+
     if (!email || !phone) {
-        return res.status(400).send('Email and phone are required');
+        return res.status(400).json({ message: 'Email and phone are required' });
     }
 
-    // Query to check if the customer exists with the provided email and phone
     const query = 'SELECT * FROM customer WHERE email = ? AND phone = ?';
-    
-    // Query the database to find a matching customer
+
     pool.query(query, [email, phone], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
-            return res.status(500).send('Server error');
+            return res.status(500).json({ message: 'Internal server error' });
         }
-        
-        // If customer found, login is successful
+
         if (results.length > 0) {
-            res.send('Login successful');
+            return res.status(200).json({ message: 'Login successful' });
         } else {
-            // Invalid credentials
-            res.status(401).send('Invalid credentials');
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
     });
 });
+
 
 
 

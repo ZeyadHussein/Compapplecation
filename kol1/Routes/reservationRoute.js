@@ -24,11 +24,12 @@ router.post('/addreservation', (req, res) => {
     pool.query(sql, reservation, (err, result) => {
         if (err) {
             console.error("Error adding reservation:", err);
-            return res.status(500).send("Error adding reservation");
+            return res.status(500).json({ message: "Error adding reservation" });
         }
-        res.status(201).send(`Reservation added with ID: ${result.insertId}`);
+        res.status(201).json({ message: `Reservation added with ID: ${result.insertId}` });
     });
 });
+
 
 // Route to get all reservations
 router.get('/reservations', (req, res) => {
