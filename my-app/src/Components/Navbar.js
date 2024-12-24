@@ -21,22 +21,16 @@ const Navbar = ({ cart }) => {
     fetchItems();
   }, []);
 
-  // Handle Create Item
-  const handleCreate = () => {
-    // Redirect to create item page
-    window.location.href = "/create-item";
-  };
-
   // Handle Edit Item
   const handleEdit = (id) => {
     // Redirect to edit page for specific item
-    window.location.href = `/edit-item/${id}`; // Fixed template literal
+    window.location.href = `/edit-item/${id}`;
   };
 
   // Handle Delete Item
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/items/${id}`, { // Fixed template literal
+      const response = await fetch(`/api/items/${id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -59,15 +53,14 @@ const Navbar = ({ cart }) => {
       <ul className="navbar-links">
         <NavigationLinks to="/">Home</NavigationLinks>
         <NavigationLinks to="/menu">Menu</NavigationLinks>
-        <NavigationLinks to="/table">Table</NavigationLinks> {/* Updated Link to Table */}
+        <NavigationLinks to="/table">Table</NavigationLinks>
         <NavigationLinks to="/signin">Sign In</NavigationLinks>
         <NavigationLinks to="/signup">Sign Up</NavigationLinks>
+        <NavigationLinks to="/crud">CRUD Operations</NavigationLinks>
       </ul>
 
       {/* CRUD Operations Section (View Items) */}
       <div className="navbar-right">
-        <button onClick={handleCreate} className="crud-button">Review Tables</button>
-
         {/* Display Table Items */}
         <ul className="items-list">
           {items.map((item) => (

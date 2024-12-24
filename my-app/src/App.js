@@ -36,8 +36,8 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/menu" element={<Menu onAddToCart={addToCart} />} />
             <Route path="/cart" element={<Cart cart={cart} onRemoveFromCart={removeFromCart} />} />
-            <Route path="/reservation" element={<Reservation />} /> {/* New Reservation route */}
-            <Route path="/table" element={<Table />} />  {/* New Table route */}
+            <Route path="/reservation" element={<Reservation />} />
+            <Route path="/table" element={<Table />} />
             <Route path="/crud" element={<CrudPage />} />  {/* New CRUD operations route */}
           </Routes>
           <Footer />
@@ -46,4 +46,5 @@ function App() {
     </LanguageProvider>
   );
 }
+
 export default App;

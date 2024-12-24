@@ -1,169 +1,341 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const CrudPage = () => {
-  const [tables, setTables] = useState([]);
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [records, setRecords] = useState([]);
-  const [newRecord, setNewRecord] = useState({});
-  const [selectedRecord, setSelectedRecord] = useState(null);
+    const [payments, setPayments] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [formData, setFormData] = useState({
+        pay_id: '',
+        order_id: '',
+        pay_type: '',
+        pay_date: '',
+        pay_amount: '',
+        cus_id: '',
+        order_date: '',
+        total_amount: '',
+        payment_status: ''
+    });
+    const [searchTerm, setSearchTerm] = useState('');
+    const [view, setView] = useState('payment'); // State to toggle between 'payment' and 'order'
+    const [newOrder, setNewOrder] = useState({
+        cus_id: '',
+        order_date: '',
+        total_amount: '',
+        payment_status: ''
+    });
 
-  // Fetch available tables from the backend
-  useEffect(() => {
-    const fetchTables = async () => {
-      const response = await fetch('/api/tables');
-      const data = await response.json();
-      setTables(data);
+    // Fetch all payments and orders on component mount
+    useEffect(() => {
+        fetchPayments();
+        fetchOrders();
+    }, []);
+
+    const fetchPayments = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/payments');
+            setPayments(response.data);
+        } catch (error) {
+            console.error('Error fetching payments:', error);
+        }
     };
-    fetchTables();
-  }, []);
 
-  // Fetch records for the selected table
-  useEffect(() => {
-    if (selectedTable) {
-      const fetchRecords = async () => {
-        const response = await fetch(`/api/${selectedTable}`);
-        const data = await response.json();
-        setRecords(data);
-      };
-      fetchRecords();
-    }
-  }, [selectedTable]);
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/orders');
+            setOrders(response.data);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
 
-  const handleSelectTable = (tableName) => {
-    setSelectedTable(tableName);
-    setSelectedRecord(null);
-  };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
 
-  const handleCreate = async () => {
-    const response = await fetch(`/api/${selectedTable}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newRecord),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      alert(data.message);
-      setNewRecord({});
-      setSelectedRecord(null);
-    }
-  };
+    const handleNewOrderChange = (e) => {
+        const { name, value } = e.target;
+        setNewOrder({
+            ...newOrder,
+            [name]: value
+        });
+    };
 
-  const handleDelete = async (id) => {
-    const response = await fetch(`/api/${selectedTable}/${id}`, {
-      method: 'DELETE',
-    });
-    if (response.ok) {
-      alert('Record deleted');
-      setRecords(records.filter((record) => record.id !== id));
-    }
-  };
+    const handleAddOrder = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:5000/api/addorder', newOrder);
+            alert('Order added successfully');
+            setNewOrder({
+                cus_id: '',
+                order_date: '',
+                total_amount: '',
+                payment_status: ''
+            });
+            fetchOrders(); // Refresh the orders list
+        } catch (error) {
+            console.error('Error adding order:', error);
+            alert('Failed to add order');
+        }
+    };
 
-  const handleUpdate = async () => {
-    const response = await fetch(`/api/${selectedTable}/${selectedRecord.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(selectedRecord),
-    });
-    if (response.ok) {
-      alert('Record updated');
-      setSelectedRecord(null);
-    }
-  };
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        if (view === 'payment' && !formData.pay_id) {
+            alert('Please select a payment to update');
+            return;
+        } else if (view === 'order' && !formData.order_id) {
+            alert('Please select an order to update');
+            return;
+        }
 
-  const handleCustomerCreate = async () => {
-    const response = await fetch(`/api/customers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newRecord),
-    });
-    if (response.ok) {
-      alert('Customer created');
-      setNewRecord({});
-    }
-  };
+        try {
+            if (view === 'payment') {
+                await axios.put('http://localhost:5000/api/update-payment', formData);
+                alert('Payment updated successfully');
+            } else if (view === 'order') {
+                await axios.put('http://localhost:5000/api/update-order', formData);
+                alert('Order updated successfully');
+            }
+            setFormData({
+                pay_id: '',
+                order_id: '',
+                pay_type: '',
+                pay_date: '',
+                pay_amount: '',
+                cus_id: '',
+                order_date: '',
+                total_amount: '',
+                payment_status: ''
+            });
+            fetchPayments();
+            fetchOrders();
+        } catch (error) {
+            console.error('Error updating:', error);
+        }
+    };
 
-  return (
-    <div>
-      <h1>CRUD Operations</h1>
+    const handleDelete = async (id) => {
+        try {
+            if (view === 'payment') {
+                await axios.post('http://localhost:5000/api/delete-payment', { pay_id: id });
+            } else if (view === 'order') {
+                await axios.post('http://localhost:5000/api/delete-order', { order_id: id });
+            }
+            alert(`${view.charAt(0).toUpperCase() + view.slice(1)} deleted successfully`);
+            fetchPayments();
+            fetchOrders();
+        } catch (error) {
+            console.error('Error deleting:', error);
+        }
+    };
 
-      {/* Select a table to work with */}
-      <div>
-        <h2>Select a Table</h2>
-        <select onChange={(e) => handleSelectTable(e.target.value)}>
-          <option value="">-- Select Table --</option>
-          {tables.map((table) => (
-            <option key={table.table_name} value={table.table_name}>
-              {table.table_name}
-            </option>
-          ))}
-        </select>
-      </div>
+    const handleSearch = async () => {
+        try {
+            if (view === 'payment') {
+                const response = await axios.get('http://localhost:5000/api/searchpayment', {
+                    params: { term: searchTerm }
+                });
+                setPayments(response.data);
+            } else if (view === 'order') {
+                const response = await axios.get('http://localhost:5000/api/searchorder', {
+                    params: { term: searchTerm }
+                });
+                setOrders(response.data);
+            }
+        } catch (error) {
+            console.error('Error searching:', error);
+        }
+    };
 
-      {/* Table Operations */}
-      {selectedTable && (
+    return (
         <div>
-          <h2>{selectedTable} Data</h2>
+            <h1>{view.charAt(0).toUpperCase() + view.slice(1)} Management</h1>
 
-          {/* Display records */}
-          <ul>
-            {records.map((record) => (
-              <li key={record.id}>
-                {JSON.stringify(record)}
-                <button onClick={() => setSelectedRecord(record)}>Edit</button>
-                <button onClick={() => handleDelete(record.id)}>Delete</button>
-              </li>
-            ))}
-          </ul>
+            {/* Toggle between Payment and Order */}
+            <div>
+                <button onClick={() => setView('payment')}>Payment</button>
+                <button onClick={() => setView('order')}>Order</button>
+            </div>
 
-          {/* Create New Record Form */}
-          <h3>Create New Record</h3>
-          {selectedTable !== 'customers' && (
-            <div>
-              <input
-                type="text"
-                placeholder="Field 1"
-                onChange={(e) => setNewRecord({ ...newRecord, field1: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Field 2"
-                onChange={(e) => setNewRecord({ ...newRecord, field2: e.target.value })}
-              />
-              <button onClick={handleCreate}>Create</button>
-            </div>
-          )}
-          {selectedTable === 'customers' && (
-            <div>
-              <input
-                type="text"
-                placeholder="Phone Number"
-                onChange={(e) => setNewRecord({ ...newRecord, phoneNumber: e.target.value })}
-              />
-              <button onClick={handleCustomerCreate}>Create Customer</button>
-            </div>
-          )}
+            {/* Add Order Form */}
+            {view === 'order' && (
+                <div>
+                    <h2>Add New Order</h2>
+                    <form onSubmit={handleAddOrder}>
+                        <input
+                            type="text"
+                            name="cus_id"
+                            placeholder="Customer ID"
+                            value={newOrder.cus_id}
+                            onChange={handleNewOrderChange}
+                            required
+                        />
+                        <input
+                            type="date"
+                            name="order_date"
+                            placeholder="Order Date"
+                            value={newOrder.order_date}
+                            onChange={handleNewOrderChange}
+                            required
+                        />
+                        <input
+                            type="number"
+                            name="total_amount"
+                            placeholder="Total Amount"
+                            value={newOrder.total_amount}
+                            onChange={handleNewOrderChange}
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="payment_status"
+                            placeholder="Payment Status"
+                            value={newOrder.payment_status}
+                            onChange={handleNewOrderChange}
+                            required
+                        />
+                        <button type="submit">Add Order</button>
+                    </form>
+                </div>
+            )}
 
-          {/* Update Record Form */}
-          {selectedRecord && (
+            {/* Search Form */}
             <div>
-              <h3>Edit Record</h3>
-              <input
-                type="text"
-                value={selectedRecord.field1 || ''}
-                onChange={(e) => setSelectedRecord({ ...selectedRecord, field1: e.target.value })}
-              />
-              <input
-                type="text"
-                value={selectedRecord.field2 || ''}
-                onChange={(e) => setSelectedRecord({ ...selectedRecord, field2: e.target.value })}
-              />
-              <button onClick={handleUpdate}>Update</button>
+                <input
+                    type="text"
+                    placeholder={`Search by ${view === 'payment' ? 'Order ID or Payment Date' : 'Order Date or Amount'}`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button onClick={handleSearch}>Search</button>
             </div>
-          )}
+
+            {/* Display List Based on View */}
+            <table>
+                <thead>
+                    <tr>
+                        {view === 'payment' ? (
+                            <>
+                                <th>Order ID</th>
+                                <th>Payment Type</th>
+                                <th>Payment Date</th>
+                                <th>Payment Amount</th>
+                            </>
+                        ) : (
+                            <>
+                                <th>Customer ID</th>
+                                <th>Order Date</th>
+                                <th>Total Amount</th>
+                                <th>Payment Status</th>
+                            </>
+                        )}
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {(view === 'payment' ? payments : orders).length === 0 ? (
+                        <tr>
+                            <td colSpan="5">No {view}s available</td>
+                        </tr>
+                    ) : (
+                        (view === 'payment' ? payments : orders).map((item) => (
+                            <tr key={item[view === 'payment' ? 'pay_id' : 'order_id']}>
+                                <td>{item[view === 'payment' ? 'order_id' : 'cus_id']}</td>
+                                <td>{item[view === 'payment' ? 'pay_type' : 'order_date']}</td>
+                                <td>{item[view === 'payment' ? 'pay_date' : 'total_amount']}</td>
+                                <td>{item[view === 'payment' ? 'pay_amount' : 'payment_status']}</td>
+                                <td>
+                                    <button onClick={() => setFormData(item)}>Edit</button>
+                                    <button onClick={() => handleDelete(item[view === 'payment' ? 'pay_id' : 'order_id'])}>Delete</button>
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+
+            {/* Form to Edit Payment or Order */}
+            <form onSubmit={handleUpdate}>
+                <h2>Edit {view.charAt(0).toUpperCase() + view.slice(1)}</h2>
+                {view === 'payment' ? (
+                    <>
+                        <input
+                            type="text"
+                            name="order_id"
+                            placeholder="Order ID"
+                            value={formData.order_id}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="pay_type"
+                            placeholder="Payment Type"
+                            value={formData.pay_type}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="date"
+                            name="pay_date"
+                            placeholder="Payment Date"
+                            value={formData.pay_date}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="number"
+                            name="pay_amount"
+                            placeholder="Payment Amount"
+                            value={formData.pay_amount}
+                            onChange={handleChange}
+                            required
+                        />
+                    </>
+                ) : (
+                    <>
+                        <input
+                            type="text"
+                            name="cus_id"
+                            placeholder="Customer ID"
+                            value={formData.cus_id}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="date"
+                            name="order_date"
+                            placeholder="Order Date"
+                            value={formData.order_date}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="number"
+                            name="total_amount"
+                            placeholder="Total Amount"
+                            value={formData.total_amount}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="payment_status"
+                            placeholder="Payment Status"
+                            value={formData.payment_status}
+                            onChange={handleChange}
+                            required
+                        />
+                    </>
+                )}
+                <button type="submit">Update {view.charAt(0).toUpperCase() + view.slice(1)}</button>
+            </form>
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default CrudPage;
