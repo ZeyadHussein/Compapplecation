@@ -16,15 +16,15 @@ const CrudPage = () => {
         payment_status: ''
     });
     const [searchTerm, setSearchTerm] = useState('');
-    const [view, setView] = useState('payment'); // State to toggle between 'payment' and 'order'
+    const [view, setView] = useState('payment');
     const [newOrder, setNewOrder] = useState({
         cus_id: '',
         order_date: '',
         total_amount: '',
         payment_status: ''
     });
+    const [isAddOrderVisible, setIsAddOrderVisible] = useState(false); // Track visibility of add order form
 
-    // Fetch all payments and orders on component mount
     useEffect(() => {
         fetchPayments();
         fetchOrders();
@@ -76,6 +76,7 @@ const CrudPage = () => {
                 payment_status: ''
             });
             fetchOrders(); // Refresh the orders list
+            setIsAddOrderVisible(false); // Hide the form after adding
         } catch (error) {
             console.error('Error adding order:', error);
             alert('Failed to add order');
@@ -121,9 +122,9 @@ const CrudPage = () => {
     const handleDelete = async (id) => {
         try {
             if (view === 'payment') {
-                await axios.post('http://localhost:5000/api/delete-payment', { pay_id: id });
+                await axios.delete('http://localhost:5000/api/delete-payment', { data: { pay_id: id } });
             } else if (view === 'order') {
-                await axios.post('http://localhost:5000/api/delete-order', { order_id: id });
+                await axios.delete('http://localhost:5000/api/delete-order', { data: { order_id: id } });
             }
             alert(`${view.charAt(0).toUpperCase() + view.slice(1)} deleted successfully`);
             fetchPayments();
@@ -151,55 +152,135 @@ const CrudPage = () => {
         }
     };
 
+    const styles = {
+        container: {
+            fontFamily: 'Arial, sans-serif',
+            padding: '20px',
+            backgroundColor: '#E0F7FA',
+            borderRadius: '8px',
+        },
+        header: {
+            textAlign: 'center',
+            color: '#0277BD',
+        },
+        button: {
+            padding: '10px 20px',
+            margin: '10px',
+            cursor: 'pointer',
+            backgroundColor: '#29B6F6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+        },
+        buttonActive: {
+            backgroundColor: '#0288D1',
+        },
+        form: {
+            marginTop: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
+        input: {
+            padding: '10px',
+            margin: '10px',
+            width: '200px',
+            border: '1px solid #B3E5FC',
+            borderRadius: '4px',
+        },
+        table: {
+            width: '100%',
+            marginTop: '20px',
+            borderCollapse: 'collapse',
+        },
+        th: {
+            backgroundColor: '#29B6F6',
+            color: 'white',
+            padding: '10px',
+            textAlign: 'left',
+        },
+        td: {
+            padding: '10px',
+            border: '1px solid #B3E5FC',
+        },
+        noData: {
+            textAlign: 'center',
+            fontStyle: 'italic',
+        },
+    };
+
     return (
-        <div>
-            <h1>{view.charAt(0).toUpperCase() + view.slice(1)} Management</h1>
+        <div style={styles.container}>
+            <h1 style={styles.header}>{view.charAt(0).toUpperCase() + view.slice(1)} Management</h1>
 
             {/* Toggle between Payment and Order */}
             <div>
-                <button onClick={() => setView('payment')}>Payment</button>
-                <button onClick={() => setView('order')}>Order</button>
+                <button
+                    onClick={() => setView('payment')}
+                    style={{ ...styles.button, ...(view === 'payment' ? styles.buttonActive : {}) }}
+                >
+                    Payment
+                </button>
+                <button
+                    onClick={() => setView('order')}
+                    style={{ ...styles.button, ...(view === 'order' ? styles.buttonActive : {}) }}
+                >
+                    Order
+                </button>
             </div>
 
-            {/* Add Order Form */}
+            {/* Toggle Add Order Form */}
             {view === 'order' && (
                 <div>
-                    <h2>Add New Order</h2>
-                    <form onSubmit={handleAddOrder}>
-                        <input
-                            type="text"
-                            name="cus_id"
-                            placeholder="Customer ID"
-                            value={newOrder.cus_id}
-                            onChange={handleNewOrderChange}
-                            required
-                        />
-                        <input
-                            type="date"
-                            name="order_date"
-                            placeholder="Order Date"
-                            value={newOrder.order_date}
-                            onChange={handleNewOrderChange}
-                            required
-                        />
-                        <input
-                            type="number"
-                            name="total_amount"
-                            placeholder="Total Amount"
-                            value={newOrder.total_amount}
-                            onChange={handleNewOrderChange}
-                            required
-                        />
-                        <input
-                            type="text"
-                            name="payment_status"
-                            placeholder="Payment Status"
-                            value={newOrder.payment_status}
-                            onChange={handleNewOrderChange}
-                            required
-                        />
-                        <button type="submit">Add Order</button>
-                    </form>
+                    <button
+                        onClick={() => setIsAddOrderVisible(!isAddOrderVisible)} // Toggle visibility
+                        style={styles.button}
+                    >
+                        {isAddOrderVisible ? 'Hide Add Order' : 'Show Add Order'}
+                    </button>
+
+                    {/* Add Order Form */}
+                    {isAddOrderVisible && (
+                        <form onSubmit={handleAddOrder} style={styles.form}>
+                            <input
+                                type="text"
+                                name="cus_id"
+                                placeholder="Customer ID"
+                                value={newOrder.cus_id}
+                                onChange={handleNewOrderChange}
+                                required
+                                style={styles.input}
+                            />
+                            <input
+                                type="date"
+                                name="order_date"
+                                placeholder="Order Date"
+                                value={newOrder.order_date}
+                                onChange={handleNewOrderChange}
+                                required
+                                style={styles.input}
+                            />
+                            <input
+                                type="number"
+                                name="total_amount"
+                                placeholder="Total Amount"
+                                value={newOrder.total_amount}
+                                onChange={handleNewOrderChange}
+                                required
+                                style={styles.input}
+                            />
+                            <input
+                                type="text"
+                                name="payment_status"
+                                placeholder="Payment Status"
+                                value={newOrder.payment_status}
+                                onChange={handleNewOrderChange}
+                                required
+                                style={styles.input}
+                            />
+                            <button type="submit" style={styles.button}>Add Order</button>
+                        </form>
+                    )}
                 </div>
             )}
 
@@ -210,47 +291,48 @@ const CrudPage = () => {
                     placeholder={`Search by ${view === 'payment' ? 'Order ID or Payment Date' : 'Order Date or Amount'}`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    style={styles.input}
                 />
-                <button onClick={handleSearch}>Search</button>
+                <button onClick={handleSearch} style={styles.button}>Search</button>
             </div>
 
             {/* Display List Based on View */}
-            <table>
+            <table style={styles.table}>
                 <thead>
                     <tr>
                         {view === 'payment' ? (
                             <>
-                                <th>Order ID</th>
-                                <th>Payment Type</th>
-                                <th>Payment Date</th>
-                                <th>Payment Amount</th>
+                                <th style={styles.th}>Order ID</th>
+                                <th style={styles.th}>Payment Type</th>
+                                <th style={styles.th}>Payment Date</th>
+                                <th style={styles.th}>Payment Amount</th>
                             </>
                         ) : (
                             <>
-                                <th>Customer ID</th>
-                                <th>Order Date</th>
-                                <th>Total Amount</th>
-                                <th>Payment Status</th>
+                                <th style={styles.th}>Customer ID</th>
+                                <th style={styles.th}>Order Date</th>
+                                <th style={styles.th}>Total Amount</th>
+                                <th style={styles.th}>Payment Status</th>
                             </>
                         )}
-                        <th>Actions</th>
+                        <th style={styles.th}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {(view === 'payment' ? payments : orders).length === 0 ? (
                         <tr>
-                            <td colSpan="5">No {view}s available</td>
+                            <td colSpan="5" style={styles.noData}>No {view}s available</td>
                         </tr>
                     ) : (
                         (view === 'payment' ? payments : orders).map((item) => (
                             <tr key={item[view === 'payment' ? 'pay_id' : 'order_id']}>
-                                <td>{item[view === 'payment' ? 'order_id' : 'cus_id']}</td>
-                                <td>{item[view === 'payment' ? 'pay_type' : 'order_date']}</td>
-                                <td>{item[view === 'payment' ? 'pay_date' : 'total_amount']}</td>
-                                <td>{item[view === 'payment' ? 'pay_amount' : 'payment_status']}</td>
-                                <td>
-                                    <button onClick={() => setFormData(item)}>Edit</button>
-                                    <button onClick={() => handleDelete(item[view === 'payment' ? 'pay_id' : 'order_id'])}>Delete</button>
+                                <td style={styles.td}>{item[view === 'payment' ? 'order_id' : 'cus_id']}</td>
+                                <td style={styles.td}>{item[view === 'payment' ? 'pay_type' : 'order_date']}</td>
+                                <td style={styles.td}>{item[view === 'payment' ? 'pay_date' : 'total_amount']}</td>
+                                <td style={styles.td}>{item[view === 'payment' ? 'pay_amount' : 'payment_status']}</td>
+                                <td style={styles.td}>
+                                    <button onClick={() => setFormData(item)} style={styles.button}>Edit</button>
+                                    <button onClick={() => handleDelete(item[view === 'payment' ? 'pay_id' : 'order_id'])} style={styles.button}>Delete</button>
                                 </td>
                             </tr>
                         ))
@@ -259,7 +341,7 @@ const CrudPage = () => {
             </table>
 
             {/* Form to Edit Payment or Order */}
-            <form onSubmit={handleUpdate}>
+            <form onSubmit={handleUpdate} style={styles.form}>
                 <h2>Edit {view.charAt(0).toUpperCase() + view.slice(1)}</h2>
                 {view === 'payment' ? (
                     <>
@@ -270,6 +352,7 @@ const CrudPage = () => {
                             value={formData.order_id}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="text"
@@ -278,6 +361,7 @@ const CrudPage = () => {
                             value={formData.pay_type}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="date"
@@ -286,6 +370,7 @@ const CrudPage = () => {
                             value={formData.pay_date}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="number"
@@ -294,6 +379,7 @@ const CrudPage = () => {
                             value={formData.pay_amount}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                     </>
                 ) : (
@@ -305,6 +391,7 @@ const CrudPage = () => {
                             value={formData.cus_id}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="date"
@@ -313,6 +400,7 @@ const CrudPage = () => {
                             value={formData.order_date}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="number"
@@ -321,6 +409,7 @@ const CrudPage = () => {
                             value={formData.total_amount}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                         <input
                             type="text"
@@ -329,10 +418,11 @@ const CrudPage = () => {
                             value={formData.payment_status}
                             onChange={handleChange}
                             required
+                            style={styles.input}
                         />
                     </>
                 )}
-                <button type="submit">Update {view.charAt(0).toUpperCase() + view.slice(1)}</button>
+                <button type="submit" style={styles.button}>Update {view.charAt(0).toUpperCase() + view.slice(1)}</button>
             </form>
         </div>
     );
