@@ -3,11 +3,10 @@ import axios from "axios";
 
 const Cart = ({ cart, onRemoveFromCart }) => {
   const [paymentMethod, setPaymentMethod] = useState("creditCard");
-  const [orderId, setOrderId] = useState(""); // Order ID input state
-  const [payAmount, setPayAmount] = useState(""); // Payment amount input state
-  const [payDate, setPayDate] = useState(""); // Payment date input state
+  const [orderId, setOrderId] = useState("");
+  const [payAmount, setPayAmount] = useState("");
+  const [payDate, setPayDate] = useState("");
 
-  // Handle form submission (send payment data to backend)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,9 +37,10 @@ const Cart = ({ cart, onRemoveFromCart }) => {
           <ul className="cart-items">
             {cart.map((item, index) => (
               <li key={index} className="cart-item">
-                <span className="cart-item-name">{item.name}</span> - 
-                <span className="cart-item-price"> ${item.price.toFixed(2)}</span>
-                {/* Remove Button */}
+                <span className="cart-item-name">{item.item_name}</span>  
+                <span className="cart-item-price">
+                  ${item.item_price.toFixed(2)}
+                </span>
                 <button 
                   className="remove-btn" 
                   onClick={() => onRemoveFromCart(index)}
@@ -50,18 +50,18 @@ const Cart = ({ cart, onRemoveFromCart }) => {
               </li>
             ))}
           </ul>
-          {/* Total Price */}
           <p className="total">
-            Total: $ {cart.reduce((total, item) => total + item.price, 0).toFixed(2)}
+            Total: $
+            {cart.reduce((total, item) => total + (item.item_price || 0), 0).toFixed(2)}
           </p>
         </div>
       )}
 
-      {/* New Payment Details Form */}
+      {/* Payment form */}
       <div className="payment-details">
         <h3>Payment Information</h3>
         <form onSubmit={handleSubmit}>
-          {/* Payment Method Selection */}
+          {/* Payment Method */}
           <div className="payment-methods">
             <label>Payment Method</label>
             <div className="payment-method-radio">
@@ -74,7 +74,6 @@ const Cart = ({ cart, onRemoveFromCart }) => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <label htmlFor="creditCard">Credit/Debit Card</label>
-
               <input
                 type="radio"
                 id="paypal"
@@ -84,7 +83,6 @@ const Cart = ({ cart, onRemoveFromCart }) => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <label htmlFor="paypal">PayPal</label>
-
               <input
                 type="radio"
                 id="cash"
@@ -97,21 +95,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
             </div>
           </div>
 
-          {/* If PayPal is selected, show PayPal details */}
-          {paymentMethod === "paypal" && (
-            <div className="form-group">
-              <p>You will be redirected to PayPal for payment processing.</p>
-            </div>
-          )}
-
-          {/* If Cash is selected, show cash-related instructions */}
-          {paymentMethod === "cash" && (
-            <div className="form-group">
-              <p>You will pay in cash at the time of delivery/pickup.</p>
-            </div>
-          )}
-
-          {/* Order ID and Payment Amount Inputs */}
+          {/* Order ID */}
           <div className="form-group">
             <label htmlFor="orderId">Order ID</label>
             <input
@@ -123,6 +107,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
             />
           </div>
 
+          {/* Payment Amount */}
           <div className="form-group">
             <label htmlFor="payAmount">Amount</label>
             <input
@@ -134,6 +119,7 @@ const Cart = ({ cart, onRemoveFromCart }) => {
             />
           </div>
 
+          {/* Payment Date */}
           <div className="form-group">
             <label htmlFor="payDate">Payment Date</label>
             <input

@@ -152,6 +152,7 @@ const CrudPage = () => {
         }
     };
 
+  
     const styles = {
         container: {
             fontFamily: 'Arial, sans-serif',
@@ -161,19 +162,19 @@ const CrudPage = () => {
         },
         header: {
             textAlign: 'center',
-            color: '#0277BD',
+            color: '#8b0000', // Dark red color
         },
         button: {
             padding: '10px 20px',
             margin: '10px',
             cursor: 'pointer',
-            backgroundColor: '#29B6F6',
+            backgroundColor: '#8b0000', // Dark red button background
             color: 'white',
             border: 'none',
             borderRadius: '4px',
         },
         buttonActive: {
-            backgroundColor: '#0288D1',
+            backgroundColor: '#800000', // Slightly darker dark red on active
         },
         form: {
             marginTop: '20px',
@@ -194,7 +195,7 @@ const CrudPage = () => {
             borderCollapse: 'collapse',
         },
         th: {
-            backgroundColor: '#29B6F6',
+            backgroundColor: '#8b0000', // Dark red header background
             color: 'white',
             padding: '10px',
             textAlign: 'left',

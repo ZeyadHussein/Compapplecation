@@ -1,3 +1,4 @@
+
 /* General Reset */
 body {
   margin: 0;
@@ -17,7 +18,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #00aaff; /* Skyblue */
+  background-color: #8b0000; /* Dark red */
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -99,7 +100,7 @@ body {
 
 .cart-icon {
   background-color: #fff;
-  color: #00aaff;
+  color: #8b0000; /* Dark red */
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -124,7 +125,7 @@ body {
   align-items: center;
   font-size: 0.8rem;
   font-weight: bold;
-  border: 2px solid #00aaff; /* Skyblue border */
+  border: 2px solid #8b0000; /* Dark red border */
 }
 
 /* Home */
@@ -135,7 +136,7 @@ body {
 
 .home h1 {
   font-size: 2.5rem;
-  color: #00aaff;
+  color: #8b0000; /* Dark red */
 }
 
 .home p {
@@ -170,7 +171,7 @@ input {
 
 button {
   padding: 0.5rem;
-  background-color: #00aaff;
+  background-color: #8b0000; /* Dark red */
   color: white;
   border: none;
   border-radius: 4px;
@@ -179,13 +180,13 @@ button {
 }
 
 button:hover {
-  background-color: #008ecc; /* Darker skyblue */
+  background-color: #7a0000; /* Darker red */
 }
 
 /* NavigationLink Button */
 .nav-button {
   padding: 0.5rem 1rem;
-  background-color: #00aaff; /* Skyblue */
+  background-color: #8b0000; /* Dark red */
   color: white;
   border: none;
   border-radius: 5px;
@@ -196,18 +197,18 @@ button:hover {
 }
 
 .nav-button:hover {
-  background-color: #008ecc; /* Darker skyblue */
+  background-color: #7a0000; /* Darker red */
   transform: scale(1.05); /* Slight zoom effect */
 }
 
 .nav-button:active {
-  background-color: #0077cc; /* Even darker blue on click */
+  background-color: #690000; /* Even darker red on click */
   transform: scale(0.98);
 }
 
 /* Footer */
 .footer {
-  background-color: #00aaff;
+  background-color: #8b0000; /* Dark red */
   color: white;
   text-align: center;
   padding: 1rem;
@@ -224,7 +225,7 @@ button:hover {
 
 .menu h2 {
   font-size: 2.5rem;
-  color: #00aaff;
+  color: #8b0000; /* Dark red */
   margin-bottom: 20px;
 }
 
@@ -273,6 +274,14 @@ button:hover {
   gap: 20px;
 }
 
+/* Root Color Variables */
+:root {
+  --primary-color: #8b0000; /* Dark red for navbar and buttons */
+  --footer-color: #333333; /* Footer background color */
+  --button-hover-color: #7a0000; /* Darker red on hover */
+  --text-color: #ffffff; /* Text color for buttons and footer */
+}
+
 /* Cart Page Styling */
 .cart-page {
   max-width: 800px;
@@ -287,7 +296,7 @@ button:hover {
 .cart-page h2 {
   text-align: center;
   font-size: 2rem;
-  color: #00aaff;
+  color: var(--primary-color); /* Dark red */
 }
 
 .cart-item {
@@ -315,7 +324,7 @@ button:hover {
 
 .remove-btn {
   background-color: #e74c3c;
-  color: white;
+  color: var(--text-color);
   border: none;
   border-radius: 4px;
   padding: 0.3rem 0.8rem;
@@ -344,7 +353,7 @@ button:hover {
 
 .payment-details h3 {
   font-size: 1.8rem;
-  color: #00aaff;
+  color: var(--primary-color); /* Dark red */
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -372,7 +381,7 @@ button:hover {
 }
 
 .payment-details input:focus {
-  border-color: #00aaff;
+  border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
 }
@@ -383,8 +392,8 @@ button:hover {
 
 .payment-details button {
   padding: 0.8rem;
-  background-color: #00aaff;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-color);
   font-size: 1.1rem;
   font-weight: bold;
   border: none;
@@ -394,79 +403,15 @@ button:hover {
 }
 
 .payment-details button:hover {
-  background-color: #008ecc;
+  background-color: var(--button-hover-color);
   transform: scale(1.05);
 }
 
 .payment-details button:active {
-  background-color: #0077cc;
+  background-color: #7a0000;
   transform: scale(0.98);
 }
 
-.payment-methods {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.payment-methods label {
-  font-size: 1rem;
-  color: #333;
-  font-weight: bold;
-}
-
-.payment-methods .card-icons {
-  display: flex;
-  gap: 1rem;
-}
-
-.card-icons img {
-  width: 40px;
-  height: auto;
-  opacity: 0.8;
-  transition: opacity 0.3s;
-}
-
-.card-icons img:hover {
-  opacity: 1;
-}
-
-/* Payment Option Section (Debit/Credit) */
-.payment-option {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.payment-option label {
-  font-size: 1rem;
-  color: #333;
-  font-weight: bold;
-  margin-right: 1rem;
-}
-
-.payment-option .payment-method-radio {
-  display: flex;
-  gap: 1rem;
-}
-
-.payment-option input[type="radio"] {
-  margin-right: 0.5rem;
-}
-
-.payment-option .payment-method-radio input:checked + label {
-  color: #00aaff; /* Highlight selected option */
-}
 /* Reservation Form Styling */
 .reservation {
   max-width: 600px;
@@ -480,7 +425,7 @@ button:hover {
 
 .reservation h2 {
   font-size: 2rem;
-  color: #00aaff;
+  color: var(--primary-color); /* Dark red */
   text-align: center;
   margin-bottom: 1.5rem;
 }
@@ -507,7 +452,7 @@ button:hover {
 }
 
 .reservation input:focus {
-  border-color: #00aaff;
+  border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
 }
@@ -518,8 +463,8 @@ button:hover {
 
 .reservation button {
   padding: 0.8rem;
-  background-color: #00aaff;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-color);
   font-size: 1.1rem;
   font-weight: bold;
   border: none;
@@ -529,7 +474,99 @@ button:hover {
 }
 
 .reservation button:hover {
-  background-color: #008ecc;
+  background-color: var(--button-hover-color);
+  transform: scale(1.05);
+}
+
+.reservation button:active {
+  background-color: #7a0000;
+  transform: scale(0.98);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .reservation {
+    padding: 1.5rem;
+  }
+
+  .reservation h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Table Container */
+.table-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* Reservation Form Styling */
+.reservation {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reservation h2 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.reservation form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.reservation label {
+  font-size: 1rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.reservation input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.reservation input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
+}
+
+.reservation input[type="number"] {
+  width: 100%;
+}
+
+.reservation button {
+  padding: 0.8rem;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.reservation button:hover {
+  background-color: var(--button-hover-color);
   transform: scale(1.05);
 }
 
@@ -548,6 +585,7 @@ button:hover {
     font-size: 1.8rem;
   }
 }
+
 /* Table Container */
 .table-container {
   width: 100%;
@@ -625,13 +663,13 @@ button:hover {
 /* Available Status */
 .available {
   background-color: #4CAF50;
-  color: white;
+  color: var(--text-color);
 }
 
 /* Reserved Status */
 .reserved {
   background-color: #f44336;
-  color: white;
+  color: var(--text-color);
 }
 
 /* Reservation Form */
@@ -679,8 +717,8 @@ button:hover {
 .reservation-form button {
   padding: 12px;
   font-size: 1rem;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #8b0000;
+  color: var(--text-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
