@@ -12,7 +12,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-
 /* Navbar */
 .navbar {
   display: flex;
@@ -21,6 +20,7 @@ body {
   background-color: #8b0000; /* Dark red */
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif; /* Ensures uniform font across navbar */
 }
 
 .logo {
@@ -56,6 +56,18 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+/* New CSS for Logout button */
+.logout-link {
+  text-decoration: none; /* Remove underline */
+  color: white;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.logout-link:hover {
+  color: #e3f7ff; /* Lightened skyblue */
 }
 
 /* Language Selector */

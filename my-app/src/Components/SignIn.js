@@ -1,40 +1,41 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link from react-router-dom
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const SignIn = () => {
+const SignIn = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-  // console.log("Signing in with email:", email);
-  // console.log("Signing in with phone:", phone);
+  const navigate = useNavigate();  // Using useNavigate to handle redirects
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-        const response = await axios.post('http://localhost:5000/api/login', {
-            email,
-            phone
-        });
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email,
+        phone,
+      });
 
-        if (response.status === 200) {
-            alert(response.data.message);
-            navigate('/home');
-        } else {
-            alert(response.data.message);
-        }
-    } catch (error) {
-        if (error.response) {
-            alert(error.response.data.message);
-        } else {
-            alert('An unexpected error occurred');
-        }
+      if (response.status === 200) {
+        const { token } = response.data;  // Assuming response contains the token
+
+        // Save the token to localStorage
+        localStorage.setItem("authToken", token);
+
+        // Trigger the onLogin function passed from App.js to update the loggedIn state
+        onLogin(true);
+
+        // Redirect to home after login
+        navigate("/home");
+      } else {
+        setError(response.data.message);
       }
+    } catch (error) {
+      setError(error.response ? error.response.data.message : "An error occurred");
+    }
   };
-
 
   return (
     <div className="signin">
@@ -57,8 +58,10 @@ const SignIn = () => {
         <button type="submit">Sign In</button>
       </form>
 
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <p>
-        Don't have an account? <Link to="/signup">Sign Up</Link> {/* Link to Sign Up */}
+        Don't have an account? <a href="/signup">Sign Up</a>
       </p>
     </div>
   );
